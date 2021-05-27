@@ -1,0 +1,30 @@
+### Read verilog files
+read_verilog ./codes/cpu.v
+read_verilog ./codes/Control.v
+read_verilog ./codes/ProgCount.v
+read_verilog ./codes/Mux.v
+read_verilog ./codes/Add.v
+read_verilog ./codes/ALUcontrol.v
+read_verilog ./codes/inst_cont.v
+read_verilog ./codes/ALU.v
+read_verilog ./codes/ImmGen.v
+read_verilog ./codes/RegFile.v
+read_verilog ./codes/data_mem_cont.v
+# include all your *.v files here except data_memory.v, 
+# instruction_memory.v and testbench.v
+
+### Constraints
+write_file cpu.constr <<EOT
+set_driving_cell BUF_X2
+set_load 0.01
+EOT
+
+### Map to gate level
+synth -top cpu; flatten;
+write_verilog -noattr cpu_syn.v
+
+### Map to tech library
+dfflibmap -liberty stdcells.lib
+abc -constr cpu.constr -D 1000 -liberty stdcells.lib
+
+

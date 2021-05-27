@@ -1,0 +1,18 @@
+### Read verilog files
+read_verilog add.v
+
+### Constraints
+write_file cpu.constr <<EOT
+set_driving_cell BUF_X2
+set_load 0.01
+EOT
+
+### Map to gate level
+synth -top adder; flatten;
+write_verilog -noattr cpu_syn.v
+
+### Map to tech library
+dfflibmap -liberty stdcells.lib
+abc -constr cpu.constr -D 1000 -liberty stdcells.lib
+
+
